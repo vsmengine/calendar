@@ -74,40 +74,77 @@ export class AppComponent {
     };
   }
 
-  getMatchBookedDates() {
-    for (let i = 0; i < this.bookedDates.length; i++) {
-      if(this.bookedDates[i].year == this.selectedYear && this.bookedDates[i].month == this.selectedMonthName) {
-        return this.bookedDates[i];
-      }
-    }
+
+  // getMatchBookedDates() {
+  //   for (let i = 0; i < this.bookedDates.length; i++) {
+  //     if(this.bookedDates[i].year == this.selectedYear && this.bookedDates[i].month == this.selectedMonthName) {
+  //       return this.bookedDates[i];
+  //     }
+  //   }
+  // }
+
+  // setNewBooking() {
+  //   for (let i = 0; i < this.newBookingDates.length; i++) {
+  //     if(this.newBookingDates[i].year == this.selectedYear && this.newBookingDates[i].month == this.selectedMonthName) {
+  //       return this.newBookingDates[i];
+  //     } else {
+  //       const newObj = {
+  //         year: this.selectedYear, 
+  //         month:this.selectedMonthName, 
+  //         dates: []
+  //       };
+  //       this.newBookingDates.push(newObj);
+  //       return this.newBookingDates[this.newBookingDates.length - 1];
+  //     }
+  //   }
+  // }
+
+
+
+  setNewBookingSlot(selectDate) {
+    const newObj = {
+      year: this.selectedYear, 
+      month:this.selectedMonthName, 
+      dates: [selectDate]
+    };
+    this.newBookingDates.push(newObj);
   }
 
-  setNewBooking() {
+  checkNewBookingDate(selectDate) {
     for (let i = 0; i < this.newBookingDates.length; i++) {
-      if(this.newBookingDates[i].year == this.selectedYear && this.newBookingDates[i].month == this.selectedMonthName) {
-        return this.newBookingDates[i];
-      } else {
-        const newObj = {
-          year: this.selectedYear, 
-          month:this.selectedMonthName, 
-          dates: []
-        };
-        this.newBookingDates.push(newObj);
-        return this.newBookingDates[this.newBookingDates.length - 1];
+      if(this.newBookingDates[i].year == this.selectedYear && 
+        this.newBookingDates[i].month == this.selectedMonthName) {
+        this.newBookingDates[i].dates.includes(selectDate) == true ? null : this.newBookingDates[i].dates.push(selectDate);
+        return;
       }
     }
+    this.setNewBookingSlot(selectDate);
   }
+
+  setNewBookingDate(selectDate) {
+    this.newBookingDates.length == 0 ? this.setNewBookingSlot(selectDate) : this.checkNewBookingDate(selectDate);
+  }
+
+  checkBookedDate(selectDate) {
+    for (let i = 0; i < this.bookedDates.length; i++) {
+      if(this.bookedDates[i].year == this.selectedYear && 
+        this.bookedDates[i].month == this.selectedMonthName && 
+        this.bookedDates[i].dates.includes(selectDate) == true) {
+          return null;
+      }
+    }
+    this.setNewBookingDate(selectDate);
+  }
+
+  // setNewBookingDate(selectDate) {
+  //   this.checkBookedDate(selectDate) == null ? null : this.checkNewBookingDate(selectDate);
+  // }
 
   getSelectedDays() {
     this.calendarService.dateInfoSubject.subscribe((datesInfo) => {
       for(let i = datesInfo['start']; i <= datesInfo['end']; i++) {
-        if(this.getMatchBookedDates() && this.getMatchBookedDates().dates.includes(i) !== true){
-          this.setNewBooking().dates.push(i);
-        } else null;
+        this.checkBookedDate(i);
       }
-      // for(let i = datesInfo['start']; i <= datesInfo['end']; i++) {
-      //   this.bookedDates[this.selectedMonthName].includes(i) !== true ? this.newBookingDates[this.selectedMonthName].push(i) : null;
-      // }
       console.log(this.bookedDates);
       console.log(this.newBookingDates);
     });
