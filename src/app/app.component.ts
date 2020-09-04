@@ -7,7 +7,8 @@ import { toArray, tap } from 'rxjs/operators';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+
   days: number[][] = [];
   weekDays: string[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   months: string[] = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
@@ -20,16 +21,41 @@ export class AppComponent {
   selectedMonthNo: number;
   selectedMonthName: string;
 
-  // bookedDates = {september: [5, 11, 19, 21, 29]};
-  // newBookingDates = {september: []};
-  bookedDates = [{year: 2020, month:'september', dates: [5, 11, 19, 21, 29]}];
-  newBookingDates = [{year: 2020, month:'september', dates: []}];
+  bookedDates = [{year: 2020, month:'september', dates: [5, 11, 19, 21, 29]}, {year: 2020, month:'november', dates: [5, 11, 19, 21, 29]}];
+  newBookingDates = [];
+  thisMonthBookedDates = [];
+  thisMonthNewBookingDates = [];
 
   constructor(
     private calendarService: CalendarService,
   ) {
     this.onInitialLoad();
     this.getSelectedDays()
+  }
+
+  ngOnInit() {
+    this.onLoadThisMonthBookedDates() == null ? this.thisMonthBookedDates = [] : this.thisMonthBookedDates = this.onLoadThisMonthBookedDates().dates;
+    this.onLoadThisMonthNewBookingDates() == null ? this.thisMonthNewBookingDates = [] : this.thisMonthNewBookingDates = this.onLoadThisMonthBookedDates().dates;
+  }
+
+  onLoadThisMonthBookedDates() {
+    for (let i = 0; i < this.bookedDates.length; i++) {
+      if(this.bookedDates[i].year == this.selectedYear && 
+        this.bookedDates[i].month == this.selectedMonthName) {
+          return this.bookedDates[i];
+      }
+    }
+    return null;
+  }
+
+  onLoadThisMonthNewBookingDates() {
+    for (let i = 0; i < this.newBookingDates.length; i++) {
+      if(this.newBookingDates[i].year == this.selectedYear && 
+        this.newBookingDates[i].month == this.selectedMonthName) {
+          return this.newBookingDates[i];
+      }
+    }
+    return null;
   }
 
   onInitialLoad() {
@@ -43,6 +69,8 @@ export class AppComponent {
     selectedMode == 'next' ? this.onNext() : this.onPrev();
     this.selectedMonthName = this.months[this.selectedMonthNo];
     this.getDaysInMonth(this.selectedYear, this.selectedMonthNo);
+    this.onLoadThisMonthBookedDates() == null ? this.thisMonthBookedDates = [] : this.thisMonthBookedDates = this.onLoadThisMonthBookedDates().dates;
+    this.onLoadThisMonthNewBookingDates() == null ? this.thisMonthNewBookingDates = [] : this.thisMonthNewBookingDates = this.onLoadThisMonthNewBookingDates().dates;
   }
 
   onNext() {
@@ -73,33 +101,6 @@ export class AppComponent {
       };
     };
   }
-
-
-  // getMatchBookedDates() {
-  //   for (let i = 0; i < this.bookedDates.length; i++) {
-  //     if(this.bookedDates[i].year == this.selectedYear && this.bookedDates[i].month == this.selectedMonthName) {
-  //       return this.bookedDates[i];
-  //     }
-  //   }
-  // }
-
-  // setNewBooking() {
-  //   for (let i = 0; i < this.newBookingDates.length; i++) {
-  //     if(this.newBookingDates[i].year == this.selectedYear && this.newBookingDates[i].month == this.selectedMonthName) {
-  //       return this.newBookingDates[i];
-  //     } else {
-  //       const newObj = {
-  //         year: this.selectedYear, 
-  //         month:this.selectedMonthName, 
-  //         dates: []
-  //       };
-  //       this.newBookingDates.push(newObj);
-  //       return this.newBookingDates[this.newBookingDates.length - 1];
-  //     }
-  //   }
-  // }
-
-
 
   setNewBookingSlot(selectDate) {
     const newObj = {
@@ -136,15 +137,12 @@ export class AppComponent {
     this.setNewBookingDate(selectDate);
   }
 
-  // setNewBookingDate(selectDate) {
-  //   this.checkBookedDate(selectDate) == null ? null : this.checkNewBookingDate(selectDate);
-  // }
-
   getSelectedDays() {
     this.calendarService.dateInfoSubject.subscribe((datesInfo) => {
       for(let i = datesInfo['start']; i <= datesInfo['end']; i++) {
         this.checkBookedDate(i);
       }
+      this.onLoadThisMonthNewBookingDates() == null ? this.thisMonthNewBookingDates = [] : this.thisMonthNewBookingDates = this.onLoadThisMonthNewBookingDates().dates;
       console.log(this.bookedDates);
       console.log(this.newBookingDates);
     });
