@@ -14,23 +14,41 @@ export class AppComponent {
   nowYear = this.now.getFullYear();
   nowMonth = this.now.getMonth();
 
+  selectedYear: number;
   selectedMonthNo: number;
   selectedMonthName: string;
 
   constructor() {
-    this.defaultLoad();
+    this.onInitialLoad();
   }
 
-  defaultLoad() {
-    this.selectedMonthNo = this.nowMonth
+  onInitialLoad() {
+    this.selectedYear = this.nowYear;
+    this.selectedMonthNo = this.nowMonth;
     this.selectedMonthName = this.months[this.selectedMonthNo];
     this.getDaysInMonth(this.nowYear, this.nowMonth);
   }
 
   onSelectMonth(selectedMode: string) { 
-    selectedMode == 'next' ? this.selectedMonthNo += 1 : this.selectedMonthNo -= 1;
+    selectedMode == 'next' ? this.onNext() : this.onPrev();
     this.selectedMonthName = this.months[this.selectedMonthNo];
-    this.getDaysInMonth(this.nowYear, this.selectedMonthNo);
+    this.getDaysInMonth(this.selectedYear, this.selectedMonthNo);
+  }
+
+  onNext() {
+    if(this.selectedMonthNo == 11) {
+      this.selectedMonthNo = 0;
+      this.selectedYear += 1;
+    } else
+    this.selectedMonthNo += 1;  
+  }
+
+  onPrev() {
+    if(this.selectedMonthNo == 0) {
+      this.selectedMonthNo = 11;
+      this.selectedYear -= 1;
+    } else
+    this.selectedMonthNo -= 1; 
   }
 
   getDaysInMonth(year: number, month: number) {

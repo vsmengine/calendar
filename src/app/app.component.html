@@ -6,6 +6,9 @@
       <div id="lastMt" (click)="onSelectMonth('prev')">&lsaquo;</div>
       <div id="nextMt" (click)="onSelectMonth('next')">&rsaquo;</div>
       <div id="months-cont">
+        <div id="years">
+          <span class="active year">{{selectedYear}}</span>
+        </div>
         <div id="months">
           <span class="active month">{{selectedMonthName}}</span>
         </div>
