@@ -10,7 +10,7 @@
           <span class="active year">{{selectedYear}}</span>
         </div>
         <div id="months">
-          <span class="active month">{{selectedMonthName}}</span>
+          <span class="active month">{{selectedMonth}}</span>
         </div>
       </div>
       <div id="daysotweek">
@@ -24,8 +24,11 @@
       </div>
       <div id="days">
         <div *ngFor="let week of days">
-          <span class="dateBox" *ngFor="let day of week" appDatelistner>{{day}}</span>
-          <!-- <span class="dateBox" *ngFor="let day of week" appDatelistner [ngClass]="{'isSelected': newBookingDates.includes(day), 'isBooked': bookedDates.includes(day)}">{{day}}</span> -->
+          <!-- <span class="dateBox" appDatelistner *ngFor="let day of week">{{day}}</span> -->
+          <span class="dateBox" 
+          appDatelistner *ngFor="let day of week" 
+          [ngClass]="{'isBooked': thisMonthBookedDates.includes(day), 'isSelected': thisMonthNewBookingDates.includes(day)}">
+          {{day}}</span>
         </div>
       </div>
     </div>

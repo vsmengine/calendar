@@ -5,9 +5,10 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class CalendarService {
-  dateInfoSubject = new Subject<any>();
+
   startNode: number; 
   endNode: number;
+  dateNodesSubject = new Subject<any>();
 
   constructor() { }
 
@@ -23,11 +24,8 @@ export class CalendarService {
   onSelectDates() {
     let startNode = this.startNode;
     let endNode = this.endNode;    
-    this.dateInfoSubject.next(
-      {
-        'start': startNode,
-        'end': endNode
-      }
+    this.dateNodesSubject.next(
+      {'start': startNode, 'end': endNode}
     );
   }
 
