@@ -9,20 +9,17 @@ import { toArray, tap } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
 
-  days: number[][] = [];
-
   selectedYear: number;
   selectedMonth: string;
-
-  thisMonthBookedDates = [];
-  thisMonthNewBookingDates = [];
+  selectedMonthDates: number[][] = [];
+  selectedMonthBookedDates: number[] = [];
+  selectedMonthNewBookingDates: number[] = [];
 
   constructor(private calendarService: CalendarService) { }
 
   ngOnInit() {
     this.onSubscribeData();
     this.calendarService.onInitialLoad();
-    //this.calendarService.getSelectedDays();
   }
 
   onSelectMonth(selectedMode: string) {
@@ -30,19 +27,13 @@ export class AppComponent implements OnInit {
   }
 
   onSubscribeData() {
-    this.calendarService.calendarSubject.subscribe((data) => {
-      this.selectedYear = data['updatedYear'];
-      this.selectedMonth = data['updatedMonth'];
-    });
-    this.calendarService.daysSubject.subscribe((data) => {
-      this.days = data
-    });
-    this.calendarService.monthBookedInfoSubject.subscribe((data) => {
-      this.thisMonthBookedDates = data
-    });
-    this.calendarService.monthNewBookingInfoSubject.subscribe((data) => {
-      this.thisMonthNewBookingDates = data
+    this.calendarService.calendarInfoSubject.subscribe((data) => {
+      this.selectedYear = data.thisYear;
+      this.selectedMonth = data.thisMonth;
+      this.selectedMonthDates = data.thisMonthDates;
+      this.selectedMonthBookedDates = data.thisMonthBookedDates;
+      this.selectedMonthNewBookingDates = data.thisMonthNewBookingDates;
     });
   }
-
+  
 }

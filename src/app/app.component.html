@@ -23,11 +23,11 @@
         <div class="day">S</div>
       </div>
       <div id="days">
-        <div *ngFor="let week of days">
+        <div *ngFor="let weeks of selectedMonthDates">
           <!-- <span class="dateBox" appDatelistner *ngFor="let day of week">{{day}}</span> -->
           <span class="dateBox" 
-          appDatelistner *ngFor="let day of week" 
-          [ngClass]="{'isBooked': thisMonthBookedDates.includes(day), 'isSelected': thisMonthNewBookingDates.includes(day)}">
+          appDatelistner *ngFor="let day of weeks" 
+          [ngClass]="{'isBooked': selectedMonthBookedDates.includes(day), 'isSelected': selectedMonthNewBookingDates.includes(day)}">
           {{day}}</span>
         </div>
       </div>
