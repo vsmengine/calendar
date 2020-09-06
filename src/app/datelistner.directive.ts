@@ -13,12 +13,12 @@ export class DatelistnerDirective {
   ) { }
 
   @HostListener('mousedown', ['$event']) onMousedown(event: MouseEvent) {
-    this.calendarService.getStartNode(+event.target['innerHTML']);
+    this.calendarService.getDateNodes('startNode', +event.target['innerHTML']);
   }
 
   @HostListener('mouseup', ['$event']) onMouseup(event: MouseEvent) {
     // this.calendarService.onSelectDates(event.target['innerHTML']);
-    this.calendarService.getEndNode(+event.target['innerHTML']);
+    this.calendarService.getDateNodes('endNode', +event.target['innerHTML']);
   }
 
 

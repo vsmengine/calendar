@@ -4,11 +4,13 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DatelistnerDirective } from './datelistner.directive';
+import { DatePickerComponent } from './date-picker/date-picker.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DatelistnerDirective
+    DatelistnerDirective,
+    DatePickerComponent
   ],
   imports: [
     BrowserModule,
