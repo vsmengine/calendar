@@ -8,32 +8,15 @@ import { toArray, tap } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  httpBookedDates = [
+    { year: 2020, month: 'september', dates: [5, 11, 19, 21, 29] },
+    { year: 2020, month: 'november', dates: [5, 11, 19, 21, 29] }
+  ]
 
-  selectedYear: number;
-  selectedMonth: string;
-  selectedMonthDates: number[][] = [];
-  selectedMonthBookedDates: number[] = [];
-  selectedMonthNewBookingDates: number[] = [];
-
-  constructor(private calendarService: CalendarService) { }
+  constructor() { }
 
   ngOnInit() {
-    this.onSubscribeData();
-    this.calendarService.onInitialLoad();
-  }
-
-  onSelectMonth(selectedMode: string) {
-    this.calendarService.onSelectMonth(selectedMode);
-  }
-
-  onSubscribeData() {
-    this.calendarService.calendarInfoSubject.subscribe((data) => {
-      this.selectedYear = data.thisYear;
-      this.selectedMonth = data.thisMonth;
-      this.selectedMonthDates = data.thisMonthDates;
-      this.selectedMonthBookedDates = data.thisMonthBookedDates;
-      this.selectedMonthNewBookingDates = data.thisMonthNewBookingDates;
-    });
+    
   }
   
 }

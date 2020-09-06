@@ -12,11 +12,7 @@ export class CalendarService {
 
   months: string[] = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
   weekDays: string[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  bookedDates = [
-    { year: 2020, month: 'september', dates: [5, 11, 19, 21, 29] },
-    { year: 2020, month: 'november', dates: [5, 11, 19, 21, 29] }
-  ];
- 
+   
   updatedYear: number; 
   updatedMonthNo: number; 
   updatedMonth: string;
@@ -24,6 +20,7 @@ export class CalendarService {
   endNode: number;
 
   thisMonthDates: number[][] = [];
+  bookedDates = [];
   newBookingDates = [];
   thisMonthBookedDates = [];
   thisMonthNewBookingDates = [];
@@ -32,16 +29,20 @@ export class CalendarService {
 
   constructor() { }
 
-  onInitialLoad() {
-    this.onInitVariables();
+  loadCalendar() {
+    this.setVariables();
     this.getDaysInMonth(this.nowYear, this.nowMonth);
     this.getSelectedDays();
     this.getThisMonthBookedDates();
     this.getThisMonthNewDates();
-    this.onEmitSubscribedData();
+    this.emitSubscribedData();
   }
 
-  onInitVariables() {
+  setBookedDates(allBookedDates) {
+    this.bookedDates = allBookedDates;
+  }
+  
+  setVariables() {
     this.updatedYear = this.nowYear;
     this.updatedMonthNo = this.nowMonth;
     this.updatedMonth = this.months[this.nowMonth];
@@ -57,7 +58,7 @@ export class CalendarService {
           newDate.setDate(newDate.getDate() + 1);
         }
       }
-      this.onEmitSubscribedData();
+      this.emitSubscribedData();
     }
   }
 
@@ -67,7 +68,7 @@ export class CalendarService {
       return;
     } else this.endNode = nodeInfo;
     this.getSelectedDays();
-    this.onEmitSubscribedData();
+    this.emitSubscribedData();
   }
 
   getSelectedDays() {
@@ -98,7 +99,8 @@ export class CalendarService {
       if (this.newBookingDates[i].year == this.updatedYear &&
         this.newBookingDates[i].month == this.updatedMonth) {
         this.newBookingDates[i].dates.includes(selectDate) == true
-          ? null
+          ? this.newBookingDates[i].dates = this.newBookingDates[i].dates.filter(
+            (date) => date !== selectDate)
           : this.newBookingDates[i].dates.push(selectDate);
         return;
       }
@@ -114,30 +116,30 @@ export class CalendarService {
     this.newBookingDates.push(newBookingSlot);
   }
 
-  onSelectMonth(selectedMode: string) {
-    selectedMode == 'next' ? this.onNext() : this.onPrev();
+  selectMonth(selectedMode: string) {
+    selectedMode == 'next' ? this.moveNext() : this.movePrev();
     this.updatedMonth = this.months[this.updatedMonthNo];
     this.getDaysInMonth(this.updatedYear, this.updatedMonthNo);
     this.getThisMonthBookedDates();
     this.getThisMonthNewDates();
-    this.onEmitSubscribedData();
+    this.emitSubscribedData();
   }
 
-  onNext() {
+  moveNext() {
     if (this.updatedMonthNo == 11) {
       this.updatedMonthNo = 0;
       this.updatedYear += 1;
     } else this.updatedMonthNo += 1;
   }
 
-  onPrev() {
+  movePrev() {
     if (this.updatedMonthNo == 0) {
       this.updatedMonthNo = 11;
       this.updatedYear -= 1;
     } else this.updatedMonthNo -= 1;
   }
 
-  onLoadThisMonthBookedDates() {
+  loadThisMonthBookedDates() {
     for (let i = 0; i < this.bookedDates.length; i++) {
       if (this.bookedDates[i].year == this.updatedYear &&
         this.bookedDates[i].month == this.updatedMonth) {
@@ -146,7 +148,7 @@ export class CalendarService {
     } return null;
   }
 
-  onLoadThisMonthNewDates() {
+  loadThisMonthNewDates() {
     for (let i = 0; i < this.newBookingDates.length; i++) {
       if (this.newBookingDates[i].year == this.updatedYear &&
         this.newBookingDates[i].month == this.updatedMonth) {
@@ -156,20 +158,20 @@ export class CalendarService {
   }
 
   getThisMonthBookedDates() {
-    this.onLoadThisMonthBookedDates() == null
+    this.loadThisMonthBookedDates() == null
       ? this.thisMonthBookedDates = []
-      : this.thisMonthBookedDates = this.onLoadThisMonthBookedDates().dates;
-    this.onEmitSubscribedData();
+      : this.thisMonthBookedDates = this.loadThisMonthBookedDates().dates;
+    this.emitSubscribedData();
   }
 
   getThisMonthNewDates() {
-    this.onLoadThisMonthNewDates() == null
+    this.loadThisMonthNewDates() == null
       ? this.thisMonthNewBookingDates = []
-      : this.thisMonthNewBookingDates = this.onLoadThisMonthNewDates().dates;
-    this.onEmitSubscribedData();
+      : this.thisMonthNewBookingDates = this.loadThisMonthNewDates().dates;
+    this.emitSubscribedData();
   }
 
-  onEmitSubscribedData() {
+  emitSubscribedData() {
     this.calendarInfoSubject.next({
       'thisYear': this.updatedYear,
       'thisMonth': this.updatedMonth,
@@ -179,7 +181,6 @@ export class CalendarService {
       'selectionStartNode': this.startNode,
       'selectionEndNode': this.endNode,
       'allNewBookingDates': this.newBookingDates,
-      'allBookedDates': this.bookedDates,
     });
   }
 
