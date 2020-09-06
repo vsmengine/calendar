@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { DatelistnerDirective } from './datelistner.directive';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DatelistnerDirective
   ],
   imports: [
     BrowserModule,

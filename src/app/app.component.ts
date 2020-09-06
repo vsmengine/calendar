@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CalendarService } from './calendar.service';
+import { toArray, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +20,16 @@ export class AppComponent {
   selectedMonthNo: number;
   selectedMonthName: string;
 
-  constructor() {
+  // bookedDates = {september: [5, 11, 19, 21, 29]};
+  // newBookingDates = {september: []};
+  bookedDates = [{year: 2020, month:'september', dates: [5, 11, 19, 21, 29]}];
+  newBookingDates = [{year: 2020, month:'september', dates: []}];
+
+  constructor(
+    private calendarService: CalendarService,
+  ) {
     this.onInitialLoad();
+    this.getSelectedDays()
   }
 
   onInitialLoad() {
@@ -64,6 +74,43 @@ export class AppComponent {
     };
   }
 
+  getMatchBookedDates() {
+    for (let i = 0; i < this.bookedDates.length; i++) {
+      if(this.bookedDates[i].year == this.selectedYear && this.bookedDates[i].month == this.selectedMonthName) {
+        return this.bookedDates[i];
+      }
+    }
+  }
 
+  setNewBooking() {
+    for (let i = 0; i < this.newBookingDates.length; i++) {
+      if(this.newBookingDates[i].year == this.selectedYear && this.newBookingDates[i].month == this.selectedMonthName) {
+        return this.newBookingDates[i];
+      } else {
+        const newObj = {
+          year: this.selectedYear, 
+          month:this.selectedMonthName, 
+          dates: []
+        };
+        this.newBookingDates.push(newObj);
+        return this.newBookingDates[this.newBookingDates.length - 1];
+      }
+    }
+  }
+
+  getSelectedDays() {
+    this.calendarService.dateInfoSubject.subscribe((datesInfo) => {
+      for(let i = datesInfo['start']; i <= datesInfo['end']; i++) {
+        if(this.getMatchBookedDates() && this.getMatchBookedDates().dates.includes(i) !== true){
+          this.setNewBooking().dates.push(i);
+        } else null;
+      }
+      // for(let i = datesInfo['start']; i <= datesInfo['end']; i++) {
+      //   this.bookedDates[this.selectedMonthName].includes(i) !== true ? this.newBookingDates[this.selectedMonthName].push(i) : null;
+      // }
+      console.log(this.bookedDates);
+      console.log(this.newBookingDates);
+    });
+  }
 
 }
