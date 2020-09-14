@@ -11,6 +11,9 @@
     &.isBooked {
       background-color: red;
     }
+    &.isHovered {
+      background-color: yellow;
+    }
   }
   
   .year {

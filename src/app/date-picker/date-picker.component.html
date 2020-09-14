@@ -10,24 +10,20 @@
             <span class="active year">{{selectedYear}}</span>
           </div>
           <div id="months">
-            <span class="active month">{{selectedMonth}}</span>
+            <span class="active month">{{selectedMonth | uppercase}}</span>
           </div>
         </div>
         <div id="daysotweek">
-          <div class="day">S</div>
-          <div class="day">M</div>
-          <div class="day">T</div>
-          <div class="day">W</div>
-          <div class="day">T</div>
-          <div class="day">F</div>
-          <div class="day">S</div>
+          <div class="day" *ngFor="let weekday of weekDays">{{weekday | uppercase}}</div>
         </div>
         <div id="days">
           <div *ngFor="let weeks of selectedMonthDates">
             <!-- <span class="dateBox" appDatelistner *ngFor="let day of week">{{day}}</span> -->
             <span class="dateBox" 
             appDatelistner *ngFor="let day of weeks" 
-            [ngClass]="{'isBooked': selectedMonthBookedDates.includes(day), 'isSelected': selectedMonthNewBookingDates.includes(day)}">
+            [ngClass]="{'isBooked': selectedMonthBookedDates.includes(day), 
+            'isSelected': selectedMonthNewBookingDates.includes(day), 
+            'isHovered': selectedMonthNewHoveringDates.includes(day)}">
             {{day}}</span>
           </div>
         </div>
